@@ -1,5 +1,3 @@
-(function($, window) {
-
-
-
-}).call(this, jQuery, window);
+$(document).ready(function() {
+    $('.actionButton').tooltip();
+});

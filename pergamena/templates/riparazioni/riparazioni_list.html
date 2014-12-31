@@ -1,0 +1,148 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-narrow">
+    {% if request.url_rule.endpoint == "riparazioni.riparazioni_pendenti" %}
+        <h1>Riparazioni pendenti</h1>
+    {% endif %}
+    {% if request.url_rule.endpoint == "riparazioni.riparazioni_completate" %}
+    <h1>Riparazioni completate</h1>
+    {% endif %}
+
+    {% if riparazioni%}
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Dettaglio</th>
+                    <th>Cognome</th>
+                    <th>Nome</th>
+                    <th>Oggetto</th>
+                    <th>Data di arrivo</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for riparazione in riparazioni %}
+                    <tr>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-info btn-xs"
+                                    data-toggle="modal"
+                                    data-target="#modal{{riparazione.id}}">
+                                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            </button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="modal{{riparazione.id}}"
+                                 tabindex="-1"
+                                 role="dialog"
+                                 aria-labelledby="myModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button"
+                                                    class="close"
+                                                    data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">
+                                                    &times;
+                                                </span>
+                                            </button>
+                                            <h4 class="modal-title" id="myModalLabel">Dettaglio riparazione</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <dl class="dl-horizontal">
+                                                <dt>Cognome</dt>
+                                                <dd>{{riparazione.cognome}}</dd>
+                                                <dt>Nome</dt>
+                                                <dd>{{riparazione.nome}}</dd>
+                                                <dt>Indirizzo</dt>
+                                                <dd>{{riparazione.indirizzo}}</dd>
+                                                <dt>Citt&agrave;</dt>
+                                                <dd>{{riparazione.citta}}</dd>
+                                                <dt>Telefono</dt>
+                                                <dd>{{riparazione.telefono}}</dd>
+                                                <dt>Cellulare</dt>
+                                                <dd>{{riparazione.cell}}</dd>
+                                                <dt>Categoria</dt>
+                                                <dd>{{riparazione.categoria}}</dd>
+                                                <dt>Oggetto</dt>
+                                                <dd>{{riparazione.oggetto}}</dd>
+                                                <dt>Descrizione</dt>
+                                                <dd>{{riparazione.descrizione}}</dd>
+                                                <dt>Referenza</dt>
+                                                <dd>{{riparazione.referenza}}</dd>
+                                                <dt>Peso</dt>
+                                                <dd>{{riparazione.peso}}</dd>
+                                                <dt>Data di arrivo</dt>
+                                                <dd>{{riparazione.data_arrivo}}</dd>
+                                                <dt>Consegna prevista</dt>
+                                                <dd>{{riparazione.consegna_prevista}}</dd>
+                                                <dt>Difetto</dt>
+                                                <dd>{{riparazione.difetto}}</dd>
+                                                <dt>Riparatore</dt>
+                                                <dd>{{riparazione.riparatore}}</dd>
+                                                <dt>Numero riparatore</dt>
+                                                <dd>{{riparazione.n_riparazione}}</dd>
+                                                <dt>Preventivo</dt>
+                                                <dd>{{riparazione.preventivo}}</dd>
+                                                <dt>Riparazione effettuata</dt>
+                                                <dd>{{riparazione.riparazione_effettuata}}</dd>
+                                                <dt>Data riparazione</dt>
+                                                <dd>{{riparazione.data_riparazione}}</dd>
+                                                <dt>Garanzia</dt>
+                                                <dd>{{riparazione.garanzia}}</dd>
+                                                <dt>Costo riparazione</dt>
+                                                <dd>{{riparazione.costo_riparazione}}</dd>
+                                                <dt>Spese di spedizione</dt>
+                                                <dd>{{riparazione.spese_spedizione}}</dd>
+                                                <dt>Totale</dt>
+                                                <dd>{{riparazione.totale}}</dd>
+                                                <dt>Note</dt>
+                                                <dd>{{riparazione.note}}</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{riparazione.cognome}}</td>
+                        <td>{{riparazione.nome}}</td>
+                        <td>{{riparazione.oggetto}}</td>
+                        <td>{{riparazione.data_arrivo or ''}}</td>
+                        <td>
+                            <a class="actionButton btn btn-default btn-xs"
+                               href="#" role="button"
+                               data-toggle="tooltip" data-placement="top"
+                               title="Modifica">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true">
+                            </a>
+                            <a class="actionButton btn btn-success btn-xs"
+                               href="#" role="button"
+                               data-toggle="tooltip" data-placement="top"
+                               title="Completa">
+                                <span class="glyphicon glyphicon-ok" aria-hidden="true">
+                            </a>
+                            <a class="actionButton btn btn-danger btn-xs"
+                               href="{{ url_for('riparazioni.delete_item', id=riparazione.id) }}"
+                               role="button"
+                               data-toggle="tooltip" data-placement="top"
+                               title="Elimina">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true">
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        {% if request.url_rule.endpoint == "riparazioni.riparazioni_pendenti" %}
+            <p class="bg-warning">Non ci sono riparazioni pendenti</p>
+        {% endif %}
+        {% if request.url_rule.endpoint == "riparazioni.riparazioni_completate" %}
+            <p class="bg-warning">Non ci sono riparazioni completate</p>
+        {% endif %}
+    {% endif %}
+
+</div>
+{% endblock %}

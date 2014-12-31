@@ -26,7 +26,7 @@ class DevConfig(Config):
     """Development configuration."""
     ENV = 'dev'
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/pergamena_db'  # TODO: Change me
+    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/pergamena_db'
     DEBUG_TB_ENABLED = True
     ASSETS_DEBUG = True  # Don't bundle/minify static assets
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.

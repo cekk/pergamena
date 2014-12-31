@@ -84,3 +84,9 @@ footer .footer-nav {
   margin-right: 25px;
   list-style: none;
 }
+
+/* stili */
+.form-group.required label:after {
+    content:"*";
+    color:red;
+}

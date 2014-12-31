@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template
 from flask.ext.login import login_required
 
-blueprint = Blueprint("user", __name__, url_prefix='/users',
+blueprint = Blueprint("users", __name__, url_prefix='/users',
                         static_folder="../static")
 
 
