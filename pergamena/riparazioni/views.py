@@ -9,6 +9,7 @@ blueprint = Blueprint("riparazioni", __name__, url_prefix='/riparazioni',
 
 from pergamena.riparazioni.models import Riparazione
 from pergamena.riparazioni.forms import InsertRiparazioneForm
+from pergamena.riparazioni.forms import CompletaRiparazioneForm
 from pergamena.utils import flash_errors
 from pergamena.database import db
 from flask.ext.login import login_required
@@ -25,7 +26,25 @@ def nuova_riparazione():
         return redirect(url_for('public.home'))
     else:
         flash_errors(form)
-    return render_template('riparazioni/insert_riparazione.html', form=form)
+    return render_template('riparazioni/form_riparazione.html', form=form)
+
+@blueprint.route("/completa_riparazione/<id>", methods=['GET', 'POST'])
+@login_required
+def completa_riparazione(id=None):
+    if not id:
+        flash(u'Devi fornire un id!', 'error')
+    else:
+        riparazione = Riparazione.query.get_or_404(id)
+        import pdb;pdb.set_trace()
+        values_dict = dict([(m.key, getattr(riparazione, m.key)) for m in riparazione.__table__.columns])
+        form = CompletaRiparazioneForm(obj=**values_dict, csrf_enabled=False)
+        if form.validate_on_submit():
+            Riparazione.update(**form.data)
+            flash("Riparazione inserita con successo!", 'success')
+            return redirect(url_for('public.home'))
+        else:
+            flash_errors(form)
+    return render_template('riparazioni/form_riparazione.html', form=form)
 
 @blueprint.route("/ricerca", methods=['GET', 'POST'])
 @login_required
@@ -47,7 +66,6 @@ def riparazioni_completate():
 @blueprint.route('/delete/<id>')
 @login_required
 def delete_item(id=None):
-    import pdb;pdb.set_trace
     if not id:
         flash(u'Devi fornire un id!', 'error')
     else:

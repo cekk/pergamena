@@ -30,7 +30,7 @@ class InsertRiparazioneForm(Form):
     preventivo = DecimalField('Preventivo', validators=[Optional()])
 
 
-class FinishRiparazioneForm(Form):
+class CompletaRiparazioneForm(InsertRiparazioneForm):
     riparazione_effettuata = TextAreaField('Riparazione effettuata')
     data_riparazione = DateField('Data della riparazione', validators=[Optional()])
     garanzia = TextField('Garanzia')
@@ -38,4 +38,3 @@ class FinishRiparazioneForm(Form):
     spese_spedizione = DecimalField('Spese di spedizione', validators=[Optional()])
     totale = DecimalField('Totale', validators=[Optional()])
     note = TextAreaField('Note')
-    finito = BooleanField('Finito')
