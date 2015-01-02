@@ -1,0 +1,121 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-narrow">
+    {% if request.url_rule.endpoint == "riparazioni.nuova_riparazione" %}
+        <h1>Nuova riparazione</h1>
+    {% endif %}
+    {% if request.url_rule.endpoint == "riparazioni.completa_riparazione" %}
+        <h1>Completa riparazione</h1>
+    {% endif %}
+    {% if request.url_rule.endpoint == "riparazioni.modifica_riparazione" %}
+    <h1>Modifica riparazione</h1>
+    {% endif %}
+    <form id="riparazioneForm" class="form form-riparazione"
+          method="POST" action="" role="form">
+        {{ form.hidden_tag() }}
+        <div class="form-group required">
+            {{form.cognome.label}}
+            {{form.cognome(placeholder="Cognome", class_="form-control")}}
+        </div>
+        <div class="form-group required">
+            {{form.nome.label}}
+            {{form.nome(placeholder="Nome", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.indirizzo.label}}
+            {{form.indirizzo(placeholder="Indirizzo", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.citta.label}}
+            {{form.citta(placeholder="Città", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.telefono.label}}
+            {{form.telefono(placeholder="Telefono", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.cell.label}}
+            {{form.cell(placeholder="Cellulare", class_="form-control")}}
+        </div>
+        <div class="form-group required">
+            {{form.categoria.label}}
+            {{form.categoria(placeholder="Categoria", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.oggetto.label}}
+            {{form.oggetto(placeholder="Oggetto", class_="form-control")}}
+        </div>
+        <div class="form-group required">
+            {{form.descrizione.label}}
+            {{form.descrizione(placeholder="Descrizione", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.referenza.label}}
+            {{form.referenza(placeholder="Referenza", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.peso.label}}
+            {{form.peso(class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.data_arrivo.label}}
+            {{form.data_arrivo(class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.consegna_prevista.label}}
+            {{form.consegna_prevista(class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.difetto.label}}
+            {{form.difetto(placeholder="Difetto", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.riparatore.label}}
+            {{form.riparatore(placeholder="Riparatore", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.n_riparazione.label}}
+            {{form.n_riparazione(placeholder="Numero riparatore", class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.preventivo.label}}
+            {{form.preventivo(class_="form-control")}}
+        </div>
+        {% if request.url_rule.endpoint != "riparazioni.nuova_riparazione" %}
+            <div class="form-group">
+                {{form.riparazione_effettuata.label}}
+                {{form.riparazione_effettuata(class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.data_riparazione.label}}
+                {{form.data_riparazione(class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.garanzia.label}}
+                {{form.garanzia(class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.costo_riparazione.label}}
+                {{form.costo_riparazione(placeholder="0", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.spese_spedizione.label}}
+                {{form.spese_spedizione(class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.totale.label}}
+                {{form.totale(class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.note.label}}
+                {{form.note(class_="form-control")}}
+            </div>
+        {% endif %}
+        <p>
+            <input class="btn btn-default btn-submit" type="submit" name="btn-salva" value="Salva">
+            <input class="btn btn-danger btn-submit" type="submit" name="btn-annulla" value="Annulla">
+        </p>
+    </form>
+</div>
+{% endblock %}

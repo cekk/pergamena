@@ -53,53 +53,65 @@
                                         <div class="modal-body">
                                             <dl class="dl-horizontal">
                                                 <dt>Cognome</dt>
-                                                <dd>{{riparazione.cognome}}</dd>
+                                                <dd>{{riparazione.cognome or ''}}</dd>
                                                 <dt>Nome</dt>
-                                                <dd>{{riparazione.nome}}</dd>
+                                                <dd>{{riparazione.nome or ''}}</dd>
                                                 <dt>Indirizzo</dt>
-                                                <dd>{{riparazione.indirizzo}}</dd>
+                                                <dd>{{riparazione.indirizzo or ''}}</dd>
                                                 <dt>Citt&agrave;</dt>
-                                                <dd>{{riparazione.citta}}</dd>
+                                                <dd>{{riparazione.citta or ''}}</dd>
                                                 <dt>Telefono</dt>
-                                                <dd>{{riparazione.telefono}}</dd>
+                                                <dd>{{riparazione.telefono or ''}}</dd>
                                                 <dt>Cellulare</dt>
-                                                <dd>{{riparazione.cell}}</dd>
+                                                <dd>{{riparazione.cell or ''}}</dd>
                                                 <dt>Categoria</dt>
-                                                <dd>{{riparazione.categoria}}</dd>
+                                                <dd>{{riparazione.categoria or ''}}</dd>
                                                 <dt>Oggetto</dt>
-                                                <dd>{{riparazione.oggetto}}</dd>
+                                                <dd>{{riparazione.oggetto or ''}}</dd>
                                                 <dt>Descrizione</dt>
-                                                <dd>{{riparazione.descrizione}}</dd>
+                                                <dd>{{riparazione.descrizione or ''}}</dd>
                                                 <dt>Referenza</dt>
-                                                <dd>{{riparazione.referenza}}</dd>
+                                                <dd>{{riparazione.referenza or ''}}</dd>
                                                 <dt>Peso</dt>
-                                                <dd>{{riparazione.peso}}</dd>
+                                                <dd>{{riparazione.peso or ''}}</dd>
                                                 <dt>Data di arrivo</dt>
-                                                <dd>{{riparazione.data_arrivo}}</dd>
+                                                <dd>
+                                                    {% if riparazione.data_arrivo %}
+                                                        {{riparazione.data_arrivo.strftime('%d/%m/%Y')}}
+                                                    {% endif %}
+                                                </dd>
                                                 <dt>Consegna prevista</dt>
-                                                <dd>{{riparazione.consegna_prevista}}</dd>
+                                                <dd>
+                                                    {% if riparazione.consegna_prevista %}
+                                                    {{riparazione.consegna_prevista.strftime('%d/%m/%Y')}}
+                                                    {% endif %}
+                                                </dd>
                                                 <dt>Difetto</dt>
-                                                <dd>{{riparazione.difetto}}</dd>
+                                                <dd>{{riparazione.difetto or ''}}</dd>
                                                 <dt>Riparatore</dt>
-                                                <dd>{{riparazione.riparatore}}</dd>
+                                                <dd>{{riparazione.riparatore or ''}}</dd>
                                                 <dt>Numero riparatore</dt>
-                                                <dd>{{riparazione.n_riparazione}}</dd>
+                                                <dd>{{riparazione.n_riparazione or ''}}</dd>
                                                 <dt>Preventivo</dt>
-                                                <dd>{{riparazione.preventivo}}</dd>
+                                                <dd>{{riparazione.preventivo or ''}}</dd>
                                                 <dt>Riparazione effettuata</dt>
-                                                <dd>{{riparazione.riparazione_effettuata}}</dd>
+                                                <dd>{{riparazione.riparazione_effettuata or ''}}</dd>
                                                 <dt>Data riparazione</dt>
-                                                <dd>{{riparazione.data_riparazione}}</dd>
+                                                <dd>
+                                                    {% if riparazione.data_riparazione %}
+                                                        {{riparazione.data_riparazione.strftime('%d/%m/%Y')}}
+                                                    {% endif %}
+                                                </dd>
                                                 <dt>Garanzia</dt>
-                                                <dd>{{riparazione.garanzia}}</dd>
+                                                <dd>{{riparazione.garanzia or ''}}</dd>
                                                 <dt>Costo riparazione</dt>
-                                                <dd>{{riparazione.costo_riparazione}}</dd>
+                                                <dd>{{riparazione.costo_riparazione or 0}}</dd>
                                                 <dt>Spese di spedizione</dt>
-                                                <dd>{{riparazione.spese_spedizione}}</dd>
+                                                <dd>{{riparazione.spese_spedizione or 0}}</dd>
                                                 <dt>Totale</dt>
-                                                <dd>{{riparazione.totale}}</dd>
+                                                <dd>{{riparazione.totale or 0}}</dd>
                                                 <dt>Note</dt>
-                                                <dd>{{riparazione.note}}</dd>
+                                                <dd>{{riparazione.note or ''}}</dd>
                                             </dl>
                                         </div>
                                     </div>
@@ -109,21 +121,28 @@
                         <td>{{riparazione.cognome}}</td>
                         <td>{{riparazione.nome}}</td>
                         <td>{{riparazione.oggetto}}</td>
-                        <td>{{riparazione.data_arrivo or ''}}</td>
+                        <td>
+                            {% if riparazione.data_arrivo %}
+                                {{riparazione.data_arrivo.strftime('%d/%m/%Y')}}
+                            {% endif %}
+                        </td>
                         <td>
                             <a class="actionButton btn btn-default btn-xs"
-                               href="#" role="button"
+                               href="{{ url_for('riparazioni.modifica_riparazione', id=riparazione.id) }}"
+                               role="button"
                                data-toggle="tooltip" data-placement="top"
                                title="Modifica">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true">
                             </a>
-                            <a class="actionButton btn btn-success btn-xs"
-                               href="{{ url_for('riparazioni.completa_riparazione', id=riparazione.id) }}"
-                               role="button"
-                               data-toggle="tooltip" data-placement="top"
-                               title="Completa">
-                                <span class="glyphicon glyphicon-ok" aria-hidden="true">
-                            </a>
+                            {% if request.url_rule.endpoint == "riparazioni.riparazioni_pendenti" %}
+                                <a class="actionButton btn btn-success btn-xs"
+                                    href="{{ url_for('riparazioni.completa_riparazione', id=riparazione.id) }}"
+                                    role="button"
+                                    data-toggle="tooltip" data-placement="top"
+                                    title="Completa">
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true">
+                                </a>
+                            {% endif %}
                             <a class="actionButton btn btn-danger btn-xs"
                                href="{{ url_for('riparazioni.delete_item', id=riparazione.id) }}"
                                role="button"

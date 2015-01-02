@@ -2,9 +2,15 @@
 from flask_wtf import Form
 from wtforms import TextField, TextAreaField, BooleanField
 from wtforms.fields.html5 import DateField, DecimalField
+from flask_wtf.file import FileField
 from wtforms.validators import DataRequired, EqualTo, Length, Optional
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from .models import Riparazione, Categoria
 
-from .models import Riparazione
+
+def available_categories():
+    return Categoria.query.order_by('nome')
+
 
 class InsertRiparazioneForm(Form):
     cognome = TextField('Cognome',
@@ -15,7 +21,11 @@ class InsertRiparazioneForm(Form):
     citta = TextField(u'Città')
     telefono = TextField('Telefono')
     cell = TextField('Cellulare')
-    categoria = TextField('Categoria',
+    categoria = QuerySelectField('Categoria',
+                    query_factory=available_categories,
+                    blank_text=u'-- seleziona --',
+                    allow_blank=True,
+                    get_label='nome',
                     validators=[DataRequired()])
     oggetto = TextField('Oggetto')
     descrizione = TextAreaField('Descrizione',
@@ -38,3 +48,7 @@ class CompletaRiparazioneForm(InsertRiparazioneForm):
     spese_spedizione = DecimalField('Spese di spedizione', validators=[Optional()])
     totale = DecimalField('Totale', validators=[Optional()])
     note = TextAreaField('Note')
+
+
+class ImportDb(Form):
+    file = FileField('File')
