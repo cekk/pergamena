@@ -6,6 +6,7 @@ from flask_wtf.file import FileField
 from wtforms.validators import DataRequired, EqualTo, Length, Optional
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from .models import Riparazione, Categoria
+import datetime
 
 
 def available_categories():
@@ -32,7 +33,8 @@ class InsertRiparazioneForm(Form):
                     validators=[DataRequired()])
     referenza = TextField('Referenza')
     peso = DecimalField('Peso', validators=[Optional()])
-    data_arrivo = DateField('Data di arrivo', validators=[Optional()])
+    data_arrivo = DateField('Data di arrivo', validators=[Optional()],
+                            default=datetime.datetime.utcnow())
     consegna_prevista = DateField('Data di consegna prevista', validators=[Optional()])
     difetto = TextAreaField('Difetto')
     riparatore = TextField('Riparatore')

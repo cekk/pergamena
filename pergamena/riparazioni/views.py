@@ -59,6 +59,30 @@ def modifica_riparazione(id=None):
             flash_errors(form)
     return render_template('riparazioni/form_riparazione.html', form=form)
 
+
+@blueprint.route("/completa_riparazione/<id>", methods=['GET', 'POST'])
+@login_required
+def completa_riparazione(id=None):
+    if not id:
+        flash(u'Devi fornire un id!', 'error')
+    else:
+        if request.form.get('btn-annulla', ''):
+            flash("Modifica annullata", 'success')
+            return redirect(url_for('public.home'))
+        riparazione = Riparazione.query.get_or_404(id)
+        values_dict = dict([(m.key, getattr(riparazione, m.key)) for m in riparazione.__table__.columns])
+        form = CompletaRiparazioneForm(**values_dict)
+        if form.validate_on_submit():
+            data = form.data
+            data['finito'] = True
+            Riparazione.update(riparazione, **data)
+            flash("Riparazione completata con successo!", 'success')
+            return redirect(request.referrer)
+        else:
+            flash_errors(form)
+    return render_template('riparazioni/form_riparazione.html', form=form)
+
+
 @blueprint.route("/ricerca", methods=['GET', 'POST'])
 @login_required
 def ricerca():
@@ -67,19 +91,19 @@ def ricerca():
     if form.validate_on_submit():
         data = form.data
         search_text = data.get('search_text')
-        riparazioni = Riparazione.query.filter((Riparazione.cognome.ilike(search_text)) | (Riparazione.oggetto.ilike(search_text)))
+        riparazioni = Riparazione.query.filter((Riparazione.cognome.ilike(search_text)) | (Riparazione.oggetto.ilike(search_text))).all()
     return render_template('riparazioni/search_form.html',
                            form=form,
-                           riparazioni=riparazioni.all(),
+                           riparazioni=riparazioni,
                            message="")
 
 @blueprint.route("/riparazioni_pendenti", methods=['GET'])
 @blueprint.route('/riparazioni_pendenti/<int:page>', methods=['GET'])
 @login_required
 def riparazioni_pendenti(page=1):
-    riparazioni = Riparazione.query.filter_by(finito=False).paginate(page, 20, False)
+    riparazioni = Riparazione.query.filter_by(finito=False).order_by(Riparazione.data_arrivo.desc()).paginate(page, 20, False)
     return render_template("riparazioni/riparazioni_list.html",
-                            riparazioni=riparazioni.all(),
+                            riparazioni=riparazioni,
                             title="Riparazioni pendenti")
 
 @blueprint.route("/riparazioni_completate", methods=['GET'])

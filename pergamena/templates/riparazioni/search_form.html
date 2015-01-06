@@ -8,14 +8,14 @@
         <div class="form-group">
             {{ form.search_text(placeholder="cerca...", class_="form-control") }}
         </div>
-        <button type="submit" class="btn btn-default">Cerca</button>
+        <button type="submit" class="btn btn-primary">Cerca</button>
+        <p class="help-block">Puoi ricercare per cognome oppure per oggetto.</p>
     </form>
 </div>
 {% endblock %}
 
 {% block no_results %}
 <div class="panel panel-default">
-    <strong>{{request.form}}</strong>
     <div class="panel-body">
         Nessun risultato trovato
     </div>
