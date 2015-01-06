@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime as dt
-
 from flask.ext.login import UserMixin
-
 from pergamena.extensions import bcrypt
 from pergamena.database import (
     Column,
@@ -12,7 +10,6 @@ from pergamena.database import (
     relationship,
     SurrogatePK,
 )
-
 
 class Riparazione(SurrogatePK, Model):
     __tablename__ = 'riparazioni'
@@ -41,7 +38,6 @@ class Riparazione(SurrogatePK, Model):
     totale = Column(db.Float)
     note = Column(db.Text)
     finito = Column(db.Boolean, default=False)
-
 
     def __init__(self, **kwargs):
         db.Model.__init__(self, **kwargs)

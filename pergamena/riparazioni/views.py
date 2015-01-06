@@ -11,6 +11,7 @@ from pergamena.riparazioni.models import Riparazione, Categoria
 from pergamena.riparazioni.forms import InsertRiparazioneForm
 from pergamena.riparazioni.forms import CompletaRiparazioneForm
 from pergamena.riparazioni.forms import ImportDb
+from pergamena.riparazioni.forms import Search
 from pergamena.utils import flash_errors
 from pergamena.database import db
 from flask.ext.login import login_required
@@ -18,6 +19,7 @@ from flask.views import MethodView
 from werkzeug import secure_filename
 from csv import reader, DictReader
 import datetime
+from sqlalchemy_searchable import search
 
 
 @blueprint.route("/nuova_riparazione", methods=['GET', 'POST'])
@@ -60,19 +62,34 @@ def modifica_riparazione(id=None):
 @blueprint.route("/ricerca", methods=['GET', 'POST'])
 @login_required
 def ricerca():
-    return render_template('riparazioni/insert_riparazione.html', form=form)
+    form = Search()
+    riparazioni = []
+    if form.validate_on_submit():
+        data = form.data
+        search_text = data.get('search_text')
+        riparazioni = Riparazione.query.filter((Riparazione.cognome.ilike(search_text)) | (Riparazione.oggetto.ilike(search_text)))
+    return render_template('riparazioni/search_form.html',
+                           form=form,
+                           riparazioni=riparazioni.all(),
+                           message="")
 
 @blueprint.route("/riparazioni_pendenti", methods=['GET'])
+@blueprint.route('/riparazioni_pendenti/<int:page>', methods=['GET'])
 @login_required
-def riparazioni_pendenti():
-    riparazioni = Riparazione.query.filter_by(finito=False)
-    return render_template("riparazioni/riparazioni_list.html", riparazioni=riparazioni.all())
+def riparazioni_pendenti(page=1):
+    riparazioni = Riparazione.query.filter_by(finito=False).paginate(page, 20, False)
+    return render_template("riparazioni/riparazioni_list.html",
+                            riparazioni=riparazioni.all(),
+                            title="Riparazioni pendenti")
 
 @blueprint.route("/riparazioni_completate", methods=['GET'])
+@blueprint.route('/riparazioni_completate/<int:page>', methods=['GET'])
 @login_required
-def riparazioni_completate():
-    riparazioni = Riparazione.query.filter_by(finito=True)
-    return render_template("riparazioni/riparazioni_list.html", riparazioni=riparazioni.all())
+def riparazioni_completate(page=1):
+    riparazioni = Riparazione.query.filter_by(finito=True).order_by(Riparazione.data_riparazione.desc()).paginate(page, 20, False)
+    return render_template("riparazioni/riparazioni_list.html",
+                           riparazioni=riparazioni,
+                           title="Riparazioni completate")
 
 @blueprint.route('/delete/<id>')
 @login_required

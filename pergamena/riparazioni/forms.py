@@ -52,3 +52,6 @@ class CompletaRiparazioneForm(InsertRiparazioneForm):
 
 class ImportDb(Form):
     file = FileField('File')
+
+class Search(Form):
+    search_text = TextField('Search')

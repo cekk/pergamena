@@ -1,0 +1,23 @@
+
+{% extends "riparazioni/riparazioni_list.html" %}
+{% block search %}
+<div class="well searchForm">
+    <form id="search-form" class="form form-inline"
+        method="POST" action="" role="form">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.search_text(placeholder="cerca...", class_="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-default">Cerca</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block no_results %}
+<div class="panel panel-default">
+    <strong>{{request.form}}</strong>
+    <div class="panel-body">
+        Nessun risultato trovato
+    </div>
+</div>
+{% endblock %}

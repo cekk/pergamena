@@ -2,13 +2,8 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container-narrow">
-    {% if request.url_rule.endpoint == "riparazioni.riparazioni_pendenti" %}
-        <h1>Riparazioni pendenti</h1>
-    {% endif %}
-    {% if request.url_rule.endpoint == "riparazioni.riparazioni_completate" %}
-    <h1>Riparazioni completate</h1>
-    {% endif %}
-
+    <h1>{{title}}</h1>
+    {% block search %}{% endblock %}
     {% if riparazioni%}
         <table class="table table-condensed">
             <thead>
@@ -18,11 +13,15 @@
                     <th>Nome</th>
                     <th>Oggetto</th>
                     <th>Data di arrivo</th>
-                    <th>Azione</th>
+                    {% if request.url_rule.endpoint == "riparazioni.riparazioni_completate" %}
+                        <th>Data riparazione</th>
+                    {% endif %}
+                    <th>Azioni</th>
                 </tr>
             </thead>
             <tbody>
-                {% for riparazione in riparazioni %}
+                {% set riparazioni_list = riparazioni.items or riparazioni %}
+                {% for riparazione in  riparazioni_list %}
                     <tr>
                         <td>
                             <button type="button"
@@ -126,6 +125,13 @@
                                 {{riparazione.data_arrivo.strftime('%d/%m/%Y')}}
                             {% endif %}
                         </td>
+                        {% if request.url_rule.endpoint == "riparazioni.riparazioni_completate" %}
+                            <td>
+                                {% if riparazione.data_riparazione %}
+                                    {{riparazione.data_riparazione.strftime('%d/%m/%Y')}}
+                                {% endif %}
+                            </td>
+                        {% endif %}
                         <td>
                             <a class="actionButton btn btn-default btn-xs"
                                href="{{ url_for('riparazioni.modifica_riparazione', id=riparazione.id) }}"
@@ -155,13 +161,32 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% if riparazioni.iter_pages %}
+            <div class=pagination>
+                {% if riparazioni.has_prev %}<a href="{{ url_for(request.url_rule.endpoint, page=riparazioni.prev_num) }}"><< Precedente</a>{% else %}<< Precedente{% endif %}
+                {%- for page in riparazioni.iter_pages() %}
+                    {% if page %}
+                        {% if page != riparazioni.page %}
+                            <a href="{{ url_for(request.url_rule.endpoint, page=page) }}">{{ page }}</a>
+                        {% else %}
+                            <strong>{{ page }}</strong>
+                        {% endif %}
+                    {% else %}
+                        <span class=ellipsis>…</span>
+                    {% endif %}
+                {%- endfor %}
+                {% if riparazioni.has_next %}<a href="{{ url_for(request.url_rule.endpoint, page=riparazioni.next_num) }}">Successivo >></a>{% else %}Successivo >>{% endif %}
+            </div>
+        {% endif %}
     {% else %}
-        {% if request.url_rule.endpoint == "riparazioni.riparazioni_pendenti" %}
-            <p class="bg-warning">Non ci sono riparazioni pendenti</p>
-        {% endif %}
-        {% if request.url_rule.endpoint == "riparazioni.riparazioni_completate" %}
-            <p class="bg-warning">Non ci sono riparazioni completate</p>
-        {% endif %}
+        {% block no_results %}
+            {% if request.url_rule.endpoint == "riparazioni.riparazioni_pendenti" %}
+                <p class="bg-warning">Non ci sono riparazioni pendenti</p>
+            {% endif %}
+            {% if request.url_rule.endpoint == "riparazioni.riparazioni_completate" %}
+                <p class="bg-warning">Non ci sono riparazioni completate</p>
+            {% endif %}
+        {% endblock %}
     {% endif %}
 
 </div>
