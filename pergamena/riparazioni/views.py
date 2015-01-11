@@ -12,6 +12,7 @@ from pergamena.riparazioni.forms import InsertRiparazioneForm
 from pergamena.riparazioni.forms import CompletaRiparazioneForm
 from pergamena.riparazioni.forms import ImportDb
 from pergamena.riparazioni.forms import Search
+from pergamena.riparazioni.forms import CategorieForm
 from pergamena.utils import flash_errors
 from pergamena.database import db
 from flask.ext.login import login_required
@@ -29,6 +30,9 @@ def nuova_riparazione():
         flash("Creazione annullata", 'success')
         return redirect(url_for('public.home'))
     form = InsertRiparazioneForm(request.form, csrf_enabled=False)
+    categorie = [(x.nome, x.nome) for x in Categoria.query.order_by('nome')]
+    categorie.insert(0, ('', '-- seleziona --'))
+    form.categoria.choices = categorie
     if form.validate_on_submit():
         new_riparazione = Riparazione.create(**form.data)
         flash("Riparazione inserita con successo!", 'success')
@@ -37,6 +41,22 @@ def nuova_riparazione():
         flash_errors(form)
     return render_template('riparazioni/form_riparazione.html', form=form)
 
+@blueprint.route("/categorie", methods=['GET', 'POST'])
+@login_required
+def categorie():
+    if request.form.get('btn-annulla', ''):
+        flash("Azione annullata", 'success')
+        return redirect(url_for('public.home'))
+    form = CategorieForm(request.form, csrf_enabled=False)
+    if form.validate_on_submit():
+        new_categoria = Categoria.create(**form.data)
+        flash("Categoria inserita con successo!", 'success')
+        return redirect(url_for('riparazioni.categorie'))
+    else:
+        flash_errors(form)
+    return render_template('riparazioni/form_categorie.html',
+                           form=form,
+                           categorie=Categoria.query.order_by('nome'))
 
 @blueprint.route("/modifica_riparazione/<id>", methods=['GET', 'POST'])
 @login_required
@@ -50,6 +70,9 @@ def modifica_riparazione(id=None):
         riparazione = Riparazione.query.get_or_404(id)
         values_dict = dict([(m.key, getattr(riparazione, m.key)) for m in riparazione.__table__.columns])
         form = CompletaRiparazioneForm(**values_dict)
+        categorie = [(x.nome, x.nome) for x in Categoria.query.order_by('nome')]
+        categorie.insert(0, ('', '-- seleziona --'))
+        form.categoria.choices = categorie
         if form.validate_on_submit():
             data = form.data
             Riparazione.update(riparazione, **data)
@@ -72,6 +95,9 @@ def completa_riparazione(id=None):
         riparazione = Riparazione.query.get_or_404(id)
         values_dict = dict([(m.key, getattr(riparazione, m.key)) for m in riparazione.__table__.columns])
         form = CompletaRiparazioneForm(**values_dict)
+        categorie = [(x.nome, x.nome) for x in Categoria.query.order_by('nome')]
+        categorie.insert(0, ('', '-- seleziona --'))
+        form.categoria.choices = categorie
         if form.validate_on_submit():
             data = form.data
             data['finito'] = True
@@ -126,6 +152,31 @@ def delete_item(id=None):
         flash(u'Riparazione eliminata.', 'success')
     return redirect(request.referrer)
 
+
+@blueprint.route('/print/<id>')
+@login_required
+def print_riparazione(id=None):
+    riparazione = None
+    if not id:
+        flash(u'Devi fornire un id!', 'error')
+        return redirect(request.referrer)
+    else:
+        riparazione = Riparazione.query.get_or_404(id)
+    return render_template("riparazioni/print_riparazione.html",
+                           riparazione=riparazione)
+
+
+@blueprint.route('/delete_categoria/<id>')
+@login_required
+def delete_categoria(id=None):
+    if not id:
+        flash(u'Devi fornire un id!', 'error')
+    else:
+        categoria = Categoria.query.get_or_404(id)
+        categoria.delete()
+        flash(u'Categoria eliminata.', 'success')
+    return redirect(url_for('riparazioni.categorie'))
+
 REFACTORED_FIELDS = (('riparaz_eff', 'riparazione_effettuata'),
                      ('spese_sped', 'spese_spedizione'),
                      ('cat', 'categoria'),
@@ -133,12 +184,12 @@ REFACTORED_FIELDS = (('riparaz_eff', 'riparazione_effettuata'),
                      ('tot', 'totale'),
                      ('costo_rip', 'costo_riparazione'),
                      ('ref', 'referenza'),
-                     ('consegna', 'consegna_prevista'),
                      ('data_riparaz', 'data_riparazione'),
-                     ('n_rip', 'n_riparazione'))
-
-DATE_FIELDS = ('data_riparazione', 'consegna_prevista', 'data_arrivo')
-FLOAT_FIELDS = ('peso', 'preventivo', 'costo_riparazione', 'spese_spedizione',
+                     ('n_rip', 'n_riparazione'),
+                     ('preventivo', 'preventivo_price'))
+REMOVED_FIELDS = ['consegna']
+DATE_FIELDS = ('data_riparazione', 'data_arrivo')
+FLOAT_FIELDS = ('peso', 'preventivo_price', 'costo_riparazione', 'spese_spedizione',
                 'totale')
 STRING_FIELDS = ('cognome', 'nome', 'indirizzo', 'citta', 'telefono',
                  'cell', 'categoria', 'oggetto', 'descrizione', 'referenza',
@@ -158,6 +209,8 @@ def import_db():
         csv = form.file.data.stream
         items = DictReader(csv)
         for item in items:
+            for field in REMOVED_FIELDS:
+                del item[field]
             if item.get('finito') == '1':
                 item['finito'] = True
             else:
@@ -165,7 +218,13 @@ def import_db():
             del item['id_riparaz']
             for field_map in REFACTORED_FIELDS:
                 item[field_map[1]] = item[field_map[0]]
-                del item[field_map[0]]
+                if field_map[0] == 'preventivo':
+                    if item[field_map[0]] and item[field_map[0]] != "0.00" :
+                        item[field_map[0]] = True
+                    else:
+                        item[field_map[0]] = False
+                else:
+                    del item[field_map[0]]
             for field in DATE_FIELDS:
                 if item.get(field) == '':
                     item[field] = None

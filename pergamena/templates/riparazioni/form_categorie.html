@@ -1,0 +1,37 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-narrow">
+    <h1>Gestione categorie</h1>
+    {% if categorie %}
+    <div>
+        <ul class="list-unstyled">
+            {% for categoria in categorie %}
+            <li>
+                <a class="actionButton btn btn-danger btn-xs"
+                    href="{{ url_for('riparazioni.delete_categoria', id=categoria.id) }}"
+                    role="button"
+                    data-toggle="tooltip" data-placement="top"
+                    title="Elimina">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true">
+                </a>
+                {{categoria.nome}}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <form id="categoriaForm" class="form form-categoria"
+    method="POST" action="" role="form">
+    {{ form.hidden_tag() }}
+    <div class="form-group required">
+        {{form.nome.label}}
+        {{form.nome(placeholder="Nome", class_="form-control")}}
+    </div>
+    <p>
+        <input class="btn btn-default btn-submit" type="submit" name="btn-salva" value="Salva">
+        <input class="btn btn-danger btn-submit" type="submit" name="btn-annulla" value="Annulla">
+    </p>
+</form>
+</div>
+{% endblock %}

@@ -2,7 +2,9 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container-narrow">
-    <h1>{{title}}</h1>
+    <div class="page-header">
+        <h1>{{title}}</h1>
+    </div>
     {% block search %}{% endblock %}
     {% if riparazioni%}
         <table class="table table-condensed">
@@ -92,7 +94,15 @@
                                                 <dt>Numero riparatore</dt>
                                                 <dd>{{riparazione.n_riparazione or ''}}</dd>
                                                 <dt>Preventivo</dt>
-                                                <dd>{{riparazione.preventivo or ''}}</dd>
+                                                <dd>
+                                                    {% if riparazione.preventivo %}
+                                                        Si
+                                                    {% else %}
+                                                        No
+                                                    {% endif %}
+                                                </dd>
+                                                <dt>Prezzzo preventivo</dt>
+                                                <dd>{{riparazione.preventivo_price or ''}}</dd>
                                                 <dt>Riparazione effettuata</dt>
                                                 <dd>{{riparazione.riparazione_effettuata or ''}}</dd>
                                                 <dt>Data riparazione</dt>
@@ -112,6 +122,13 @@
                                                 <dt>Note</dt>
                                                 <dd>{{riparazione.note or ''}}</dd>
                                             </dl>
+                                            <a class="actionButton btn btn-default btn-xs"
+                                                href="{{ url_for('riparazioni.print_riparazione', id=riparazione.id) }}"
+                                                role="button"
+                                                data-toggle="tooltip" data-placement="top"
+                                                title="Stampa">
+                                                Stampa <span class="glyphicon glyphicon-print" aria-hidden="true">
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -133,6 +150,13 @@
                             </td>
                         {% endif %}
                         <td>
+                            <a class="actionButton btn btn-default btn-xs"
+                                href="{{ url_for('riparazioni.print_riparazione', id=riparazione.id) }}"
+                                role="button"
+                                data-toggle="tooltip" data-placement="top"
+                                title="Stampa">
+                                <span class="glyphicon glyphicon-print" aria-hidden="true">
+                            </a>
                             <a class="actionButton btn btn-default btn-xs"
                                href="{{ url_for('riparazioni.modifica_riparazione', id=riparazione.id) }}"
                                role="button"

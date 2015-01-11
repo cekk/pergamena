@@ -1,0 +1,95 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-narrow printRiparazione">
+    <div class="clearfix">
+        <div class="pull-left">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}">
+        </div>
+        <h1>
+            Gioielleria La Pergamena d'Oro
+        </h1>
+    </div>
+    <div class="row clearfix">
+        <div class="col-xs-6">
+            <strong>Rapporto intervento</strong>
+        </div>
+        <div class="col-xs-3">
+            <strong>n°riparazione</strong>
+        </div>
+        <div class="col-xs-3">
+            {{riparazione.n_riparazione or ''}}
+        </div>
+    </div>
+    <div class="row show-grid">
+        <div class="col-xs-3 col-xs-offset-6">
+            <strong>Riparatore</strong>
+        </div>
+        <div class="col-xs-3">
+            {{riparazione.riparatore or ''}}
+        </div>
+    </div>
+    <div class="row show-grid">
+        <div class="col-xs-3">
+            <strong>Oggetto</strong>
+        </div>
+        <div class="col-xs-3">
+            {{riparazione.oggetto or ''}}
+        </div>
+        <div class="col-xs-3">
+            <strong>Referenza</strong>
+        </div>
+        <div class="col-xs-3">
+            {{riparazione.referenza or ''}}
+        </div>
+    </div>
+    <div class="row show-grid">
+        <div class="col-xs-3">
+            <strong>Intervento effettuato</strong>
+        </div>
+        <div class="col-xs-9">
+            {{riparazione.riparazione_effettuata or ''}}
+        </div>
+    </div>
+    <div class="row show-grid">
+        <div class="col-xs-3">
+            <strong>Costo riparazione</strong>
+        </div>
+        <div class="col-xs-3">
+            &euro; {{riparazione.costo_riparazione or '0'}}
+        </div>
+        <div class="col-xs-3">
+            <strong>Garanzia</strong>
+        </div>
+        <div class="col-xs-3">
+            {{riparazione.garanzia or ''}}
+        </div>
+    </div>
+    <div class="row show-grid">
+        <div class="col-xs-3">
+            <strong>Data riparazione</strong>
+        </div>
+        <div class="col-xs-3">
+            {% if riparazione.data_riparazione %}
+                {{riparazione.data_riparazione.strftime('%d/%m/%Y')}}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row show-grid">
+        <div class="col-xs-6">
+            <strong><em>Conservare questo tagliando</em></strong>
+        </div>
+        <div class="col-xs-6">
+            <strong><em>Grazie e arrivederci</em></strong>
+        </div>
+    </div>
+    <a class="actionButton btn btn-default btn-xs hidden-print"
+        href="javascript:;"
+        onClick="window.print();return false"
+        role="button"
+        data-toggle="tooltip" data-placement="top"
+        title="Stampa">
+        Stampa <span class="glyphicon glyphicon-print" aria-hidden="true">
+    </a>
+</div>
+{% endblock %}

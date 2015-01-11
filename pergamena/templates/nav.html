@@ -19,7 +19,6 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav">
-      <li><a href="{{ url_for('public.home') }}">Home</a></li>
       <li>
           <a href="{{ url_for('riparazioni.nuova_riparazione') }}">Nuova riparazione
           </a>
@@ -33,6 +32,10 @@
               <li><a href="{{ url_for('riparazioni.riparazioni_completate') }}">Completate</a></li>
               <li><a href="{{ url_for('riparazioni.riparazioni_pendenti') }}">Da completare</a></li>
           </ul>
+      </li>
+      <li>
+          <a href="{{ url_for('riparazioni.categorie') }}">Categorie
+          </a>
       </li>
       <li>
           <a href="{{ url_for('riparazioni.ricerca') }}">

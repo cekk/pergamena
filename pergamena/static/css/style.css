@@ -90,3 +90,7 @@ footer .footer-nav {
     content:"*";
     color:red;
 }
+
+.printRiparazione .row {
+    margin-bottom: 1em;
+}

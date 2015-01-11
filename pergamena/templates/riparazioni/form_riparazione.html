@@ -63,10 +63,6 @@
             {{form.data_arrivo(class_="form-control")}}
         </div>
         <div class="form-group">
-            {{form.consegna_prevista.label}}
-            {{form.consegna_prevista(class_="form-control")}}
-        </div>
-        <div class="form-group">
             {{form.difetto.label}}
             {{form.difetto(placeholder="Difetto", class_="form-control")}}
         </div>
@@ -75,14 +71,18 @@
             {{form.riparatore(placeholder="Riparatore", class_="form-control")}}
         </div>
         <div class="form-group">
-            {{form.n_riparazione.label}}
-            {{form.n_riparazione(placeholder="Numero riparatore", class_="form-control")}}
-        </div>
-        <div class="form-group">
             {{form.preventivo.label}}
             {{form.preventivo(class_="form-control")}}
         </div>
+        <div class="form-group">
+            {{form.preventivo_price.label}}
+            {{form.preventivo_price(class_="form-control")}}
+        </div>
         {% if request.url_rule.endpoint != "riparazioni.nuova_riparazione" %}
+            <div class="form-group">
+                {{form.n_riparazione.label}}
+                {{form.n_riparazione(placeholder="Numero riparatore", class_="form-control")}}
+            </div>
             <div class="form-group">
                 {{form.riparazione_effettuata.label}}
                 {{form.riparazione_effettuata(class_="form-control")}}
