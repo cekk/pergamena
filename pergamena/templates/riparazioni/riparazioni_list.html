@@ -6,7 +6,12 @@
         <h1>{{title}}</h1>
     </div>
     {% block search %}{% endblock %}
-    {% if riparazioni%}
+    {% if request.url_rule.endpoint == "riparazioni.ricerca" %}
+        {% set riparazioni_list = riparazioni%}
+    {% else %}
+        {% set riparazioni_list = riparazioni.items %}
+    {% endif %}
+    {% if riparazioni_list%}
         <table class="table table-condensed">
             <thead>
                 <tr>
@@ -22,7 +27,6 @@
                 </tr>
             </thead>
             <tbody>
-                {% set riparazioni_list = riparazioni.items or riparazioni %}
                 {% for riparazione in  riparazioni_list %}
                     <tr>
                         <td>

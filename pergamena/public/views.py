@@ -2,7 +2,7 @@
 '''Public section, including homepage and signup.'''
 from flask import (Blueprint, request, render_template, flash, url_for,
                     redirect, session)
-from flask.ext.login import login_user, login_required, logout_user
+from flask.ext.login import login_user, login_required, logout_user, current_user
 
 from pergamena.extensions import login_manager
 from pergamena.user.models import User
@@ -22,8 +22,11 @@ def load_user(id):
 @blueprint.route("/", methods=["GET", "POST"])
 def home():
     form = LoginForm(request.form)
-    riparazioni_pendenti = Riparazione.query.filter_by(finito=False)
-    riparazioni_completate = Riparazione.query.filter_by(finito=True)
+    riparazioni_pendenti = 0
+    riparazioni_completate = 0
+    if current_user.is_authenticated():
+        riparazioni_pendenti = Riparazione.query.filter_by(finito=False).count()
+        riparazioni_completate = Riparazione.query.filter_by(finito=True).count()
     # Handle logging in
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -35,8 +38,8 @@ def home():
             flash_errors(form)
     return render_template("public/home.html",
                            form=form,
-                           riparazioni_pendenti=riparazioni_pendenti.count(),
-                           riparazioni_completate=riparazioni_completate.count())
+                           riparazioni_pendenti=riparazioni_pendenti,
+                           riparazioni_completate=riparazioni_completate)
 
 @blueprint.route('/logout/')
 @login_required
