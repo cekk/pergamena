@@ -1596,4 +1596,4 @@ var data=$spy.data()
 data.offset=data.offset||{}
 if(data.offsetBottom)data.offset.bottom=data.offsetBottom
 if(data.offsetTop)data.offset.top=data.offsetTop
-Plugin.call($spy,data)})})}(jQuery);
+Plugin.call($spy,data)})})}(jQuery);$(document).ready(function(){$('.actionButton').tooltip();});
